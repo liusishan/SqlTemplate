@@ -15,6 +15,7 @@ public class MixedSqlFragment implements SqlFragment {
         this.contents = contents;
     }
 
+    @Override
     public boolean apply(Context context) {
 
         for (SqlFragment sf : contents) {

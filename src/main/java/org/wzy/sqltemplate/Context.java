@@ -43,8 +43,8 @@ public class Context {
         binding.put(key, value);
     }
 
-    public void appendSql(String sqlFragement) {
-        sql.append(sqlFragement).append(" ");
+    public void appendSql(String sqlFragment) {
+        sql.append(sqlFragment).append(" ");
     }
 
     public Map<String, Object> getBinding() {
@@ -77,6 +77,7 @@ public class Context {
 
     static class ContextAccessor implements PropertyAccessor {
 
+        @Override
         public Object getProperty(Map context, Object target, Object name)
               throws OgnlException {
             Map map = (Map) target;
@@ -94,18 +95,21 @@ public class Context {
             return null;
         }
 
+        @Override
         public void setProperty(Map context, Object target, Object name,
                                 Object value) throws OgnlException {
             Map map = (Map) target;
             map.put(name, value);
         }
 
+        @Override
         public String getSourceAccessor(OgnlContext arg0, Object arg1,
                                         Object arg2) {
             // TODO Auto-generated method stub
             return null;
         }
 
+        @Override
         public String getSourceSetter(OgnlContext arg0, Object arg1, Object arg2) {
             // TODO Auto-generated method stub
             return null;

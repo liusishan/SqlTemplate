@@ -12,11 +12,13 @@ public class TextFragment implements SqlFragment {
         this.sql = sql;
     }
 
+    @Override
     public boolean apply(final Context context) {
 
         GenericTokenParser parser2 = new GenericTokenParser("${", "}",
               new TokenHandler() {
 
+                  @Override
                   public String handleToken(String content) {
 
                       Object value = OgnlCache.getValue(content,

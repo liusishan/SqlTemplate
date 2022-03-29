@@ -1,37 +1,23 @@
 package org.wzy.sqltemplate;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.wzy.sqltemplate.script.*;
+import org.wzy.sqltemplate.token.GenericTokenParser;
+import org.wzy.sqltemplate.token.TokenHandler;
+import org.xml.sax.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.wzy.sqltemplate.script.ChooseFragment;
-import org.wzy.sqltemplate.script.ForEachFragment;
-import org.wzy.sqltemplate.script.IfFragment;
-import org.wzy.sqltemplate.script.MixedSqlFragment;
-import org.wzy.sqltemplate.script.OgnlCache;
-import org.wzy.sqltemplate.script.SetFragment;
-import org.wzy.sqltemplate.script.SqlFragment;
-import org.wzy.sqltemplate.script.TextFragment;
-import org.wzy.sqltemplate.script.TrimFragment;
-import org.wzy.sqltemplate.script.WhereFragment;
-import org.wzy.sqltemplate.token.GenericTokenParser;
-import org.wzy.sqltemplate.token.TokenHandler;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * @author Wen
@@ -64,22 +50,17 @@ public class SqlTemplate {
         String sql = context.getSql();
 
         GenericTokenParser parser1 = new GenericTokenParser("#{", "}",
-              new TokenHandler() {
+              content -> {
 
-                  public String handleToken(String content) {
+                  Object value = OgnlCache.getValue(content, context.getBinding());
 
-                      Object value = OgnlCache.getValue(content,
-                            context.getBinding());
-
-                      if (value == null) {
-                          throw new RuntimeException("Can not found "
-                                + content + " value");
-                      }
-
-                      context.addParameter(value);
-
-                      return "?";
+                  if (value == null) {
+                      throw new RuntimeException("Can not found " + content + " value");
                   }
+
+                  context.addParameter(value);
+
+                  return "?";
               });
 
         sql = parser1.parse(sql);
@@ -171,22 +152,26 @@ public class SqlTemplate {
             DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(new EntityResolver() {
 
+                @Override
                 public InputSource resolveEntity(String publicId,
                                                  String systemId) throws SAXException, IOException {
                     return new InputSource(this.getClass().getClassLoader().getResourceAsStream("script-1.0.dtd"));
                 }
             });
             builder.setErrorHandler(new ErrorHandler() {
+                @Override
                 public void error(SAXParseException exception)
                       throws SAXException {
                     throw exception;
                 }
 
+                @Override
                 public void fatalError(SAXParseException exception)
                       throws SAXException {
                     throw exception;
                 }
 
+                @Override
                 public void warning(SAXParseException exception)
                       throws SAXException {
                 }
@@ -217,6 +202,7 @@ public class SqlTemplate {
         }
 
         private class TrimHandler implements TagHandler {
+            @Override
             public void handleNode(Node nodeToHandle,
                                    List<SqlFragment> targetContents) {
                 List<SqlFragment> contents = buildDynamicTag(nodeToHandle);
@@ -250,6 +236,7 @@ public class SqlTemplate {
         }
 
         private class WhereHandler implements TagHandler {
+            @Override
             public void handleNode(Node nodeToHandle,
                                    List<SqlFragment> targetContents) {
                 List<SqlFragment> contents = buildDynamicTag(nodeToHandle);
@@ -261,6 +248,7 @@ public class SqlTemplate {
         }
 
         private class SetHandler implements TagHandler {
+            @Override
             public void handleNode(Node nodeToHandle,
                                    List<SqlFragment> targetContents) {
                 List<SqlFragment> contents = buildDynamicTag(nodeToHandle);
@@ -272,6 +260,7 @@ public class SqlTemplate {
         }
 
         private class ForEachHandler implements TagHandler {
+            @Override
             public void handleNode(Node nodeToHandle,
                                    List<SqlFragment> targetContents) {
                 List<SqlFragment> contents = buildDynamicTag(nodeToHandle);
@@ -314,6 +303,7 @@ public class SqlTemplate {
         }
 
         private class IfHandler implements TagHandler {
+            @Override
             public void handleNode(Node nodeToHandle,
                                    List<SqlFragment> targetContents) {
                 List<SqlFragment> contents = buildDynamicTag(nodeToHandle);
@@ -337,6 +327,7 @@ public class SqlTemplate {
         }
 
         private class OtherwiseHandler implements TagHandler {
+            @Override
             public void handleNode(Node nodeToHandle,
                                    List<SqlFragment> targetContents) {
                 List<SqlFragment> contents = buildDynamicTag(nodeToHandle);
@@ -347,6 +338,7 @@ public class SqlTemplate {
         }
 
         private class ChooseHandler implements TagHandler {
+            @Override
             public void handleNode(Node nodeToHandle,
                                    List<SqlFragment> targetContents) {
                 List<SqlFragment> whenSqlFragments = new ArrayList<SqlFragment>();

@@ -1,18 +1,9 @@
 package org.wzy.sqltemplate;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 /**
@@ -47,13 +38,7 @@ public class Configuration {
             FutureTask<SqlTemplate> f = templateCache.get(content);
 
             if (f == null) {
-                FutureTask<SqlTemplate> ft = new FutureTask<SqlTemplate>(
-                      new Callable<SqlTemplate>() {
-
-                          public SqlTemplate call() throws Exception {
-                              return createTemplate(content);
-                          }
-                      });
+                FutureTask<SqlTemplate> ft = new FutureTask<SqlTemplate>(() -> createTemplate(content));
 
                 f = templateCache.putIfAbsent(content, ft);
 

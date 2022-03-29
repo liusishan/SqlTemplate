@@ -29,6 +29,7 @@ public class TrimFragment implements SqlFragment {
         this.suffixesToOverride = suffixesToOverride;
     }
 
+    @Override
     public boolean apply(Context context) {
         FilteredContent fContext = new FilteredContent(context);
 
@@ -114,8 +115,8 @@ public class TrimFragment implements SqlFragment {
         }
 
         @Override
-        public void appendSql(String sqlFragement) {
-            sql.append(sqlFragement).append(" ");
+        public void appendSql(String sqlFragment) {
+            sql.append(sqlFragment).append(" ");
         }
 
         @Override

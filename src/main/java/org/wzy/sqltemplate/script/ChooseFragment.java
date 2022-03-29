@@ -15,6 +15,7 @@ public class ChooseFragment implements SqlFragment {
         this.defaultSqlFragment = defaultSqlFragment;
     }
 
+    @Override
     public boolean apply(Context context) {
         for (SqlFragment sqlNode : ifSqlFragments) {
             if (sqlNode.apply(context)) {

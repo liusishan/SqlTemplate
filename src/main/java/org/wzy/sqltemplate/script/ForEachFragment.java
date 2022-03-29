@@ -35,6 +35,7 @@ public class ForEachFragment implements SqlFragment {
 
     }
 
+    @Override
     public boolean apply(Context context) {
 
         Map<String, Object> bindings = context.getBinding();
@@ -137,9 +138,10 @@ public class ForEachFragment implements SqlFragment {
         }
 
         @Override
-        public void appendSql(String sql) {
+        public void appendSql(String sqlFragment) {
             GenericTokenParser parser = new GenericTokenParser("#{", "}",
                   new TokenHandler() {
+                      @Override
                       public String handleToken(String content) {
                           String newContent = content.replaceFirst("^\\s*"
                                       + item + "(?![^.,:\\s])",
@@ -154,7 +156,7 @@ public class ForEachFragment implements SqlFragment {
                       }
                   });
 
-            delegate.appendSql(parser.parse(sql));
+            delegate.appendSql(parser.parse(sqlFragment));
         }
 
         @Override
@@ -191,12 +193,12 @@ public class ForEachFragment implements SqlFragment {
         }
 
         @Override
-        public void appendSql(String sql) {
-            if (!prefixApplied && sql != null && sql.trim().length() > 0) {
+        public void appendSql(String sqlFragment) {
+            if (!prefixApplied && sqlFragment != null && sqlFragment.trim().length() > 0) {
                 delegate.appendSql(prefix);
                 prefixApplied = true;
             }
-            delegate.appendSql(sql);
+            delegate.appendSql(sqlFragment);
         }
 
         @Override
