@@ -16,17 +16,14 @@ public class ExpressionEvaluator {
         if (value instanceof Boolean)
             return (Boolean) value;
         if (value instanceof Number)
-            return !new BigDecimal(String.valueOf(value))
-                  .equals(BigDecimal.ZERO);
+            return new BigDecimal(String.valueOf(value)).compareTo(BigDecimal.ZERO) != 0;
         return value != null;
     }
 
-    public Iterable<?> evaluateIterable(String expression,
-                                        Object parameterObject) {
+    public Iterable<?> evaluateIterable(String expression, Object parameterObject) {
         Object value = OgnlCache.getValue(expression, parameterObject);
         if (value == null)
-            throw new RuntimeException("The expression '" + expression
-                  + "' evaluated to a null value.");
+            throw new RuntimeException("The expression '" + expression + "' evaluated to a null value.");
         if (value instanceof Iterable)
             return (Iterable<?>) value;
         if (value.getClass().isArray()) {
@@ -34,7 +31,7 @@ public class ExpressionEvaluator {
             // a ClassCastException (issue 209). Do the work manually
             // Curse primitives! :) (JGB)
             int size = Array.getLength(value);
-            List<Object> answer = new ArrayList<Object>();
+            List<Object> answer = new ArrayList<>();
             for (int i = 0; i < size; i++) {
                 Object o = Array.get(value, i);
                 answer.add(o);
@@ -44,8 +41,7 @@ public class ExpressionEvaluator {
         if (value instanceof Map) {
             return ((Map) value).entrySet();
         }
-        throw new RuntimeException("Error evaluating expression '" + expression
-              + "'.  Return value (" + value + ") was not iterable.");
+        throw new RuntimeException("Error evaluating expression '" + expression + "'.  Return value (" + value + ") was not iterable.");
     }
 
 }

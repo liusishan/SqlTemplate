@@ -10,6 +10,22 @@ import java.util.Map;
 public class TestTemplate {
 
     @Test
+    public void test_simple_select() throws Exception {
+        Configuration configuration = new Configuration();
+
+        SqlTemplate template = configuration
+              .getTemplate("select * from X.aaa  ORDER by a.DISINDEX");
+
+        HashMap<String, Object> map = new HashMap<>();
+
+        map.put("type", "type1");
+
+        SqlMeta process = template.process(map);
+
+        System.out.println(process);
+    }
+
+    @Test
     public void testIf() {
 
         Configuration configuration = new Configuration();
